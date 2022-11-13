@@ -10,18 +10,19 @@ import akka.actor.typed.ActorRef
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.AskPattern._
 import akka.util.Timeout
+import akka.http.scaladsl.server.Directives.{complete, get, path}
 
 //#import-json-formats
-//#user-routes-class
+//#user-Humphrey.routes-class
 class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit val system: ActorSystem[_]) {
 
-  //#user-routes-class
+  //#user-Humphrey.routes-class
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   import JsonFormats._
   //#import-json-formats
 
   // If ask takes more time than this to complete the request is failed
-  private implicit val timeout = Timeout.create(system.settings.config.getDuration("my-app.routes.ask-timeout"))
+  private implicit val timeout = Timeout.create(system.settings.config.getDuration("my-app.Humphrey.routes.ask-timeout"))
 
   def getUsers(): Future[Users] =
     userRegistry.ask(GetUsers)
@@ -32,7 +33,7 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit val syst
   def deleteUser(name: String): Future[ActionPerformed] =
     userRegistry.ask(DeleteUser(name, _))
 
-  //#all-routes
+  //#all-Humphrey.routes
   //#users-get-post
   //#users-get-delete
   val userRoutes: Route =
@@ -75,6 +76,6 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit val syst
         })
       //#users-get-delete
     }
-  //#all-routes
+  //#all-Humphrey.routes
 }
 

@@ -1,6 +1,6 @@
 package com.example
 
-//#user-routes-spec
+//#user-Humphrey.routes-spec
 //#test-top
 import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import akka.http.scaladsl.marshalling.Marshal
@@ -92,4 +92,4 @@ class UserRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with Sc
   //#set-up
 }
 //#set-up
-//#user-routes-spec
+//#user-Humphrey.routes-spec
