@@ -38,7 +38,10 @@ object Humphrey extends App {
   //creating server
   val config = ConfigFactory.load()
 
-  val routes = getAllRoute
+  val routes = getAllRoute //~ getScreeningsBetweenDatesRoute
+
+  import controllers.screeningsController._
+  println(getAllScreenings)
 
   Http().newServerAt(config.getString("http.host"), config.getInt("http.port")).bindFlow(routes)
 }

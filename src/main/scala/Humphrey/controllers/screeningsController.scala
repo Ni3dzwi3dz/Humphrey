@@ -19,42 +19,29 @@ Case classes are used as data templates for Spray formatter
  */
 
   case class screeningRep(date: String, title: String, room: Int)
-  case class screeningsList(l : List[screeningRep])
 
-  object JsonFormatter extends SprayJsonSupport with DefaultJsonProtocol{
+  case class screeningsList(l: List[screeningRep])
+
+  object JsonFormatter extends SprayJsonSupport with DefaultJsonProtocol {
     implicit val screeningFormat: RootJsonFormat[screeningRep] = jsonFormat3(screeningRep)
     implicit val screeningListFormat: RootJsonFormat[screeningsList] = jsonFormat1(screeningsList)
   }
+
   import JsonFormatter._
 
 
   val allScreeningsQuery = for {
-    (s,m) <- screenings join movies on (_.movieId === _.movieId)
+    (s, m) <- screenings join movies on (_.movieId === _.movieId)
   } yield (s.screeningTime, m.title, s.roomId)
 
   val singleScreeningForIdQuery: Int => Query[(Rep[Timestamp], Rep[String], Rep[Int]), (Timestamp, String, Int), Seq] = i => for {
-    (s,m) <- screenings join movies on (_.movieId ===_.movieId) if m.movieId === i
+    (s, m) <- screenings join movies on (_.movieId === _.movieId) if m.movieId === i
   } yield (s.screeningTime, m.title, s.roomId)
 
-  val screeningsBetweenDates : (String,String) => Query[(Rep[Timestamp], Rep[String], Rep[Int]), (Timestamp, String, Int), Seq] =
-    (start, end) => for {
-      (s,m) <- screenings join movies on (_.movieId ===_.movieId)
-        if s.screeningTime.compareTo(Timestamp.valueOf(start)) >= 0 && s.screeningTime.compareTo(Timestamp.valueOf(end)) < 0
-    } yield (s.screeningTime, m.title, s.roomId)
-
-  val getAllScreenings: JsValue = screeningsList(Await.result(db.run(allScreeningsQuery.result),1.seconds).map(i =>resultToScreeningRep(i)).toList).toJson
+  val getAllScreenings: JsValue = screeningsList(Await.result(db.run(allScreeningsQuery.result), 1.seconds).map(i => resultToScreeningRep(i)).toList).toJson
 
   val getScreeningsBetweenDates: (String, String) => JsValue = (startDate: String, endDate: String) =>
-    screeningsList(Await.result(db.run(allScreeningsQuery.result),2.seconds).map(i =>resultToScreeningRep(i)).toList.
-      filter(i => true)
-      )).toJson
-
-
-
-
-
-
-
+    screeningsList(Await.result(db.run(allScreeningsQuery.result), 2.seconds).map(i => resultToScreeningRep(i)).toList.
+      filter(i => checkIfIsBetweenDates(i, startDate, endDate))).toJson
 
 }
-
