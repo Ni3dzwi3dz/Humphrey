@@ -2,11 +2,12 @@ package Humphrey.routes
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import Humphrey.controllers.screeningsController._
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives
 
 
 object screeningRoutes extends Directives with SprayJsonSupport {
-
+  // TODO: add validation, esp. for screening dates
   lazy val getAllRoute =
     pathPrefix("screenings") {
       path(Segment){
@@ -15,7 +16,8 @@ object screeningRoutes extends Directives with SprayJsonSupport {
       get {
            complete(getAllScreenings)
             }
-    }
+    }~
+      complete(StatusCodes.BadRequest)
 
   val getScreeningsBetweenDatesRoute = path("screenings"){
     parameters("startDate","endDate") {(startDate,endDate) =>

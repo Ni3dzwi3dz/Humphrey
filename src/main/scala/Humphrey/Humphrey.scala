@@ -14,6 +14,8 @@ import models.Models._
 import routes.screeningRoutes._
 import controllers.screeningsController.reservationsForScreeningQuery
 import TestData._
+import slick.jdbc.SQLActionBuilder
+import slick.sql.SqlAction
 
 
 object Humphrey extends App {
@@ -37,12 +39,14 @@ object Humphrey extends App {
 
   val setupFuture = Await.result(db.run(setup), 30.second)
 
+  val numberOfScreenings = sql"SELECT COUNT(screening_id) FROM screenings".as[Int]
+
   //creating server
   val config = ConfigFactory.load()
 
   val routes =  getScreeningsBetweenDatesRoute ~ getAllRoute
 
   import controllers.screeningsController._
-  println(Await.result(db.run(reservationsForScreeningQuery(2).result),2.seconds).toList)
+  println(numberOfScreenings)
   Http().newServerAt(config.getString("http.host"), config.getInt("http.port")).bindFlow(routes)
 }
