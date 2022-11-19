@@ -12,7 +12,7 @@ import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.concurrent.duration._
 import models.Models._
 import routes.screeningRoutes._
-import controllers.screeningsController.screeningRep
+import controllers.screeningsController.reservationsForScreeningQuery
 import TestData._
 
 
@@ -27,10 +27,12 @@ object Humphrey extends App {
 
   val db = Database.forConfig("db")
 
-  val setup = DBIO.seq((movies.schema ++ rooms.schema ++ screenings.schema ++ orders.schema).create,
+  val setup = DBIO.seq((movies.schema ++ rooms.schema ++ screenings.schema ++ orders.schema ++ reservations.schema).create,
     movies ++= moviesInsert,
     rooms ++= roomsInsert,
-    screenings ++= screeningsInsert
+    screenings ++= screeningsInsert,
+    orders ++= ordersInsert,
+    reservations ++= reservationsInsert
   )
 
   val setupFuture = Await.result(db.run(setup), 30.second)
@@ -38,10 +40,9 @@ object Humphrey extends App {
   //creating server
   val config = ConfigFactory.load()
 
-  val routes = getAllRoute //~ getScreeningsBetweenDatesRoute
+  val routes =  getScreeningsBetweenDatesRoute ~ getAllRoute
 
   import controllers.screeningsController._
-  println(getAllScreenings)
-
+  println(Await.result(db.run(reservationsForScreeningQuery(2).result),2.seconds).toList)
   Http().newServerAt(config.getString("http.host"), config.getInt("http.port")).bindFlow(routes)
 }

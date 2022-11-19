@@ -30,4 +30,21 @@ object TestData {
     (8, 4,  1, Temp(Timestamp.valueOf("2022-11-16 21:15:00"))),
   )
 
+  val ordersInsert = Seq(
+    (1,1, "Grzegorz", "Brzęczyszczykiewicz"),
+    (2,1, "Róża", "Gżegżółka"),
+    (3,2, "Lechosłań", "Brzęczywół")
+  )
+
+  val reservationsInsert = Seq(
+    (1,1,3,4,'n'),
+    (2,1,3,5,'n'),
+    (3,2,1,1,'n'),
+    (4,2,1,2,'d'),
+    (5,3,3,3,'n'),
+    (6,3,3,4,'d'),
+    (7,3,3,2,'d')
+
+  )
+
 }
