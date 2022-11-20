@@ -4,18 +4,15 @@ import akka.actor.typed.ActorSystem
 import akka.actor.typed.javadsl.Behaviors
 import akka.http.scaladsl.Http
 import slick.jdbc.SQLiteProfile.api._
-import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 
-import java.sql.Timestamp
 import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.concurrent.duration._
 import models.Models._
 import routes.screeningRoutes._
-import controllers.screeningsController.reservationsForScreeningQuery
 import TestData._
-import slick.jdbc.SQLActionBuilder
-import slick.sql.SqlAction
+import routes.Routes.route
+
 
 
 object Humphrey extends App {
@@ -44,9 +41,6 @@ object Humphrey extends App {
   //creating server
   val config = ConfigFactory.load()
 
-  val routes =  getScreeningsBetweenDatesRoute ~ getAllRoute
 
-  import controllers.screeningsController._
-  println(numberOfScreenings)
-  Http().newServerAt(config.getString("http.host"), config.getInt("http.port")).bindFlow(routes)
+  Http().newServerAt(config.getString("http.host"), config.getInt("http.port")).bindFlow(route)
 }

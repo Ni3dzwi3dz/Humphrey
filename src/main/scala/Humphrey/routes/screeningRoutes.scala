@@ -19,12 +19,5 @@ object screeningRoutes extends Directives with SprayJsonSupport {
     }~
       complete(StatusCodes.BadRequest)
 
-  val getScreeningsBetweenDatesRoute = path("screenings"){
-    parameters("startDate","endDate") {(startDate,endDate) =>
-      complete(getScreeningsBetweenDates(startDate,endDate))
-    }
-  }
-
-
 
 }

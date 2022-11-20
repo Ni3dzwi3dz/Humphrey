@@ -7,7 +7,7 @@ import java.util.Date
 
 
 
-object Models {
+object Models extends  {
 
   /**
    * Class representing a single movie, described by only basic parameters. As there is no intention of ex. validating if
@@ -52,7 +52,7 @@ object Models {
   val screenings = TableQuery[Screenings]
 
   class Reservations(tag: Tag) extends Table[(Int,Int,Int,Int,Char)](tag,"RESERVATIONS"){
-    val reservationId = column[Int]("reservation_id",O.PrimaryKey)
+    val reservationId = column[Int]("reservation_id",O.PrimaryKey, O.AutoInc)
     val orderId = column[Int]("order_id")
     val row = column[Int]("row")
     val seat = column[Int]("seat")
@@ -63,11 +63,12 @@ object Models {
     def order = foreignKey("order_id",orderId,orders)(_.orderId)
 
   }
+  val orders = TableQuery[Orders]
 
-  val reservations = TableQuery[Reservations]
+
 
   class Orders(tag: Tag) extends Table[(Int,Int,String,String)](tag,"ORDERS"){
-    val orderId = column[Int]("order_id",O.PrimaryKey)
+    val orderId = column[Int]("order_id",O.PrimaryKey, O.AutoInc)
     val screeningId = column[Int]("screening_id")
     val name = column[String]("name")
     val surname = column[String]("surname")
@@ -77,8 +78,10 @@ object Models {
     def screening = foreignKey("screening_id",screeningId,screenings)(_.screeningId)
 
   }
+  val reservations = TableQuery[Reservations]
 
-  val orders = TableQuery[Orders]
+
+
 
 
 }
