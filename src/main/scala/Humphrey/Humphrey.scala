@@ -10,6 +10,7 @@ import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.concurrent.duration._
 import models.Models._
 import routes.screeningRoutes._
+import controllers.orderController._
 import TestData._
 import routes.Routes.route
 
@@ -26,12 +27,13 @@ object Humphrey extends App {
 
   val db = Database.forConfig("db")
 
-  val setup = DBIO.seq((movies.schema ++ rooms.schema ++ screenings.schema ++ orders.schema ++ reservations.schema).create,
+  val setup = DBIO.seq((movies.schema ++ rooms.schema ++ screenings.schema ++ orders.schema ++ reservations.schema ++ ticketRates.schema).create,
     movies ++= moviesInsert,
     rooms ++= roomsInsert,
     screenings ++= screeningsInsert,
     orders ++= ordersInsert,
-    reservations ++= reservationsInsert
+    reservations ++= reservationsInsert,
+    ticketRates ++= ticketRatesInsert
   )
 
   val setupFuture = Await.result(db.run(setup), 30.second)

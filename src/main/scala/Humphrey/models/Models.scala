@@ -80,6 +80,16 @@ object Models extends  {
   }
   val reservations = TableQuery[Reservations]
 
+  class TicketRates(tag: Tag) extends Table[(Int,Char,Double)](tag,"TICKET_RATES") {
+    val rateId = column[Int]("rate_id", O.PrimaryKey, O.AutoInc)
+    val ticketType = column[Char]("ticket_type")
+    val charge = column[Double]("charge")
+
+    def * = (rateId,ticketType,charge)
+  }
+
+  def ticketRates= TableQuery[TicketRates]
+
 
 
 

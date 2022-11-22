@@ -49,6 +49,7 @@ Case classes are used as data templates for Spray formatter
 
   // Controller functions
 
+  // TODO: Sort the values by title and screening time
   /*
   Basic function, that retrieves all screenings from the database and returns them as JSON.
   For clarity, mapping the results to ScreeningRep instance was moved to resultToScreeningRep in controlUtils
@@ -59,7 +60,8 @@ Case classes are used as data templates for Spray formatter
   /*
   This function is used to filter the screenings, to show only the ones between chosen dates. It also uses allScreeningsQuery, and then filters it
   using strings with start and end date.
-  Strings should be passed
+  Strings should be passed in "YYYYMMDDhhmmss" format - for the sake of requests simplicity, they will be converted before
+  comparing in ControlUtils.checkIfIsBetweenDates method
    */
   val getScreeningsBetweenDates: (String, String) => JsValue = (startDate: String, endDate: String) =>
     screeningsList(Await.result(db.run(allScreeningsQuery.result), 2.seconds).map(i => resultToScreeningRep(i)).toList.

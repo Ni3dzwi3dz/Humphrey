@@ -29,11 +29,15 @@ object ControlUtils {
 
   def createSeatsMap(rows: Int, seats: Int, screeningId: Int) = {
 
+    val seatsArray = createSeatsArray(rows, seats, screeningId)
+
+    seatsArray.map(_.mkString("-")).zipWithIndex.map(i => "Row" + i._2.toString + ": " + i._1 + "\n").mkString("")
+  }
+
+  def createSeatsArray(rows: Int, seats: Int, screeningId: Int) = {
     val reservedSeats = Await.result(db.run(reservationsForScreeningQuery(2).result),2.seconds).toList
 
     def filler(i: Int,j: Int): Any = if (reservedSeats.contains((i,j))) 'X' else j
-    val seatsArray = Array.tabulate(rows,seats)(filler)
-
-    seatsArray.map(_.mkString("-")).zipWithIndex.map(i => "Row" + i._2.toString + ": " + i._1 + "\n").mkString("")
+    Array.tabulate(rows,seats)(filler)
   }
 }
