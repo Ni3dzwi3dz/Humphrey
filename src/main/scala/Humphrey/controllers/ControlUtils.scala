@@ -1,12 +1,12 @@
 package Humphrey.controllers
 
-import Humphrey.Humphrey.db
-import Humphrey.controllers.screeningsController.{reservationsForScreeningQuery, screeningRep, singleScreening}
-
 import java.sql.Timestamp
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import slick.jdbc.SQLiteProfile.api._
+
+import Humphrey.Humphrey.db
+import Humphrey.controllers.screeningsController.{reservationsForScreeningQuery, screeningRep, singleScreening}
 
 object ControlUtils {
 

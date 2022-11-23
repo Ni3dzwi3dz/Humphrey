@@ -1,13 +1,14 @@
 package Humphrey.routes
 
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.server.{Directives, Route}
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+
 import Humphrey.controllers.orderController.{OrderRep, processOrder}
 import Humphrey.controllers.screeningsController._
 import Humphrey.controllers.screeningsController.JsonFormatter._
 import Humphrey.controllers.orderController.JsonFormatter._
 import Humphrey.controllers.orderController._
-import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.{Directives, Route}
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 
 object Routes extends Directives with SprayJsonSupport {
 

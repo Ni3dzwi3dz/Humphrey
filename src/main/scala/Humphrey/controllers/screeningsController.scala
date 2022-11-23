@@ -5,11 +5,13 @@ import scala.concurrent.duration._
 import slick.jdbc.SQLiteProfile.api._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
+import java.sql.Timestamp
+
 import Humphrey.Humphrey._
 import Humphrey.models.Models.{movies, orders, reservations, rooms, screenings}
 import ControlUtils._
 
-import java.sql.Timestamp
+
 
 
 object screeningsController {

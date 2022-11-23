@@ -1,9 +1,5 @@
 package Humphrey.controllers
 
-import Humphrey.Humphrey.db
-import Humphrey.controllers.screeningsController.singleScreeningQuery
-import Humphrey.models.Models._
-import ControlUtils.createSeatsArray
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import slick.jdbc.SQLiteProfile.api._
 import spray.json._
@@ -11,6 +7,10 @@ import java.sql.Timestamp
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
+import Humphrey.Humphrey.db
+import Humphrey.controllers.screeningsController.singleScreeningQuery
+import Humphrey.models.Models._
+import ControlUtils.createSeatsArray
 
 object orderController {
 

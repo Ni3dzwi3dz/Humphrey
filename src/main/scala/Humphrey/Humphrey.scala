@@ -5,9 +5,9 @@ import akka.actor.typed.javadsl.Behaviors
 import akka.http.scaladsl.Http
 import slick.jdbc.SQLiteProfile.api._
 import com.typesafe.config.ConfigFactory
-
 import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.concurrent.duration._
+
 import models.Models._
 import TestData._
 import routes.Routes.route

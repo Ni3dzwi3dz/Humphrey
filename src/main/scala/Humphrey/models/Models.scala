@@ -3,10 +3,6 @@ package Humphrey.models
 import slick.jdbc.SQLiteProfile.api._
 import java.sql.Timestamp
 
-import java.util.Date
-
-
-
 object Models extends  {
 
   /**
@@ -66,7 +62,6 @@ object Models extends  {
   val orders = TableQuery[Orders]
 
 
-
   class Orders(tag: Tag) extends Table[(Int,Int,String,String)](tag,"ORDERS"){
     val orderId = column[Int]("order_id",O.PrimaryKey, O.AutoInc)
     val screeningId = column[Int]("screening_id")
@@ -80,6 +75,7 @@ object Models extends  {
   }
   val reservations = TableQuery[Reservations]
 
+
   class TicketRates(tag: Tag) extends Table[(Int,Char,Double)](tag,"TICKET_RATES") {
     val rateId = column[Int]("rate_id", O.PrimaryKey, O.AutoInc)
     val ticketType = column[Char]("ticket_type")
@@ -90,9 +86,4 @@ object Models extends  {
 
   def ticketRates= TableQuery[TicketRates]
 
-
-
-
-
 }
-
