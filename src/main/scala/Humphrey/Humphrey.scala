@@ -9,8 +9,6 @@ import com.typesafe.config.ConfigFactory
 import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.concurrent.duration._
 import models.Models._
-import routes.screeningRoutes._
-import controllers.orderController._
 import TestData._
 import routes.Routes.route
 

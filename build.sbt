@@ -34,3 +34,4 @@ lazy val root = (project in file(".")).
       "com.typesafe.slick" %% "slick-hikaricp"  % "3.4.1"
     )
   )
+enablePlugins(JavaAppPackaging)

@@ -138,7 +138,7 @@ object orderController {
     } else {(seats.nonEmpty                                            //order must contain at least one seat reservation
       && !seats.exists(i => seatsMap(i._1)(i._2) == 'X') // and none of the seats in order are already booked
       && willThereBeNoGaps()                                    // and there will be no single seat left between the occupied ones, after the order
-      && !seats.exists(i => !acceptedTicketTypes.contains(i._3)))}  // and every ticket has an accepted type
+      && seats.forall(i => acceptedTicketTypes.contains(i._3)))}  // and every ticket has an accepted type
   }
 
   def calculateTotalAmount(id: Int): Double = Await.result(db.run(amountQuery(id).result),2.seconds).sum
