@@ -1,0 +1,35 @@
+#!/bin/bash
+echo Checking all screenings
+curl --location --request GET 'http://localhost:9090/screenings/'
+
+echo Checking screenings  beetween 25.11.2022 19:00 and 26.11.2022 19:00
+curl --location --request GET 'http://localhost:9090/screenings/?startDate=20221125190000&endDate=20221126190000'
+
+echo Now, we choose screening no.2 and request for detailed info
+curl --location --request GET 'http://localhost:9090/screenings/2'
+
+echo If there is no screening by the given Id, proper error message is returned
+curl --location --request GET 'http://localhost:9090/screenings/2222'
+
+echo Same goes for non-int parameters
+curl --location --request GET 'http://localhost:9090/screenings/ScreeningNumberTwelve'
+
+echo Our first attempt to book tickets should fail, because someone already booked seats we chose
+curl --location --request POST 'http://localhost:9090/orders' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"Grzegorz","screeningId":2,"seats":[[3,1,"n"],[3,2,"n"]],"surname":"Brzęczyszczykiewicz"}'
+
+echo Also, if there are no seats by this number, error message will be returned
+curl --location --request POST 'http://localhost:9090/orders' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"Grzegorz","screeningId":2,"seats":[[233,1,"n"],[3,152,"n"]],"surname":"Brzęczyszczykiewicz"}'
+
+echo Now, lets book some unoccupied seats
+curl --location --request POST 'http://localhost:9090/orders' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"Grzegorz","screeningId":2,"seats":[[4,1,"n"],[4,2,"n"]],"surname":"Brzęczyszczykiewicz"}'
+
+echo Of course, you cant book tickets, for screenings in the past or in less than 15 minutes
+curl --location --request POST 'http://localhost:9090/orders' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"Grzegorz","screeningId":9,"seats":[[3,1,"n"],[3,2,"n"]],"surname":"Brzęczyszczykiewicz"}'
