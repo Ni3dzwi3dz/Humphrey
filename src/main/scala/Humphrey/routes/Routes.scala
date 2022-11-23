@@ -2,20 +2,22 @@ package Humphrey.routes
 
 import Humphrey.controllers.orderController.{OrderRep, processOrder}
 import Humphrey.controllers.screeningsController._
+import Humphrey.controllers.screeningsController.JsonFormatter._
 import Humphrey.controllers.orderController.JsonFormatter._
 import Humphrey.controllers.orderController._
-
-
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.Directives
+import akka.http.scaladsl.server.{Directives, Route}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 
 object Routes extends Directives with SprayJsonSupport {
 
-  lazy val route =
+  lazy val route: Route =
     pathPrefix("screenings") {
-      path(Segment){                                                          // for info about a single screening
-        id => get { complete(getSingleScreening(id.toInt))}
+      path(IntNumber){                                                          // for info about a single screening
+        id => get { getSingleScreening(id) match {
+          case Right(singleScreening(id,title,director,date,seats)) => complete(200-> singleScreening(id,title,director,date,seats))
+          case Left(msg) => complete(400 -> msg)
+        }}
       } ~
       parameters("startDate","endDate") {(startDate,endDate) => //for info about screening between two dates
           complete(200 -> getScreeningsBetweenDates(startDate,endDate))
@@ -30,11 +32,7 @@ object Routes extends Directives with SprayJsonSupport {
           case Success(message, orderId, expiryDate, totalCost) => complete(200 -> Success(message,orderId,expiryDate,totalCost))
           case Error(message,status) => complete(status -> message)
         }}
-      }~
-      get{
-        complete(OrderRep(1,"Grzegorz","Brzęczyszczykiewicz",List((1,1,'n'),(1,2,'n'))))
-      }
-    }
+      }}~
     complete(StatusCodes.BadRequest)
 
 }

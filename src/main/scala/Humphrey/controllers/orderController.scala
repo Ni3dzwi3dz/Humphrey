@@ -58,7 +58,7 @@ object orderController {
 
   def insertOrderToBase(ord: OrderRep): Result= {
     val orderInsert = (orders returning orders.map(_.orderId)) += (0,ord.screeningId,ord.name,ord.surname)
-    val newOrderId = (Await.result(db.run(orderInsert),2.seconds))
+    val newOrderId = Await.result(db.run(orderInsert),2.seconds)
 
     val reservationsInsert = reservations ++= ord.seats.map(i => (0,newOrderId,i._1,i._2,i._3))
     val resInsert = Await.result(db.run(reservationsInsert),2.seconds)
@@ -97,7 +97,7 @@ object orderController {
   the name. Therefore, if portuguese gentleman named Jorge Rodrigo Samuel Gonzalez Gomes Da Costa wants to book a ticket,
   he can use his full credentials, but has to put a dash between each part.
    */
-  def checkUppercase(name:String): Boolean = name.split("-").filter(_(0).isLower).length == 0
+  def checkUppercase(name:String): Boolean = !name.split("-").exists(_ (0).isLower)
 
   /*
   Just name length check. Nothing to elaborate
@@ -129,16 +129,19 @@ object orderController {
 
       val pattern = "X-[0-9]*-X".r
 
-      seatsMap.map(_.mkString("-")).filter(i => pattern.findAllIn(i).length != 0).length == 0
+      seatsMap.map(_.mkString("-")).exists(i => pattern.findAllIn(i).isEmpty)
     }
 
-    (!seats.isEmpty                                             //order must contain at least one seat reservation
-      && seats.filter(i => seatsMap(i._1)(i._2) == 'X').isEmpty // and none of the seats in order are already booked
+    if (!seats.filter(i => i._1 >= seatsMap.size || i._2 >= seatsMap(0).size).isEmpty) { //first we check, if there are
+      println("hello")                                                                  // seats by this number
+      false
+    } else {(seats.nonEmpty                                            //order must contain at least one seat reservation
+      && !seats.exists(i => seatsMap(i._1)(i._2) == 'X') // and none of the seats in order are already booked
       && willThereBeNoGaps()                                    // and there will be no single seat left between the occupied ones, after the order
-      && seats.filter(i => !acceptedTicketTypes.contains(i._3)).isEmpty) // and every ticket has an accepted type
+      && !seats.exists(i => !acceptedTicketTypes.contains(i._3)))}  // and every ticket has an accepted type
   }
 
-  def calculateTotalAmount(id: Int) = Await.result(db.run(amountQuery(id).result),2.seconds).sum
+  def calculateTotalAmount(id: Int): Double = Await.result(db.run(amountQuery(id).result),2.seconds).sum
 
   val amountQuery: Int => Query[Rep[Double], Double, Seq] = id => for {
     r <- reservations if r.orderId === id

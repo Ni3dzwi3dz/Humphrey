@@ -49,26 +49,32 @@ Case classes are used as data templates for Spray formatter
 
   // Controller functions
 
-  // TODO: Sort the values by title and screening time
+
   /*
   Basic function, that retrieves all screenings from the database and returns them as JSON.
   For clarity, mapping the results to ScreeningRep instance was moved to resultToScreeningRep in controlUtils
    */
   val getAllScreenings: JsValue = screeningsList(Await.result(db.run(allScreeningsQuery.result), 1.seconds).
-    map(i => resultToScreeningRep(i)).toList).toJson
+    map(i => resultToScreeningRep(i)).toList.sortBy(i => (i.title,i.date))).toJson
 
   /*
   This function is used to filter the screenings, to show only the ones between chosen dates. It also uses allScreeningsQuery, and then filters it
   using strings with start and end date.
   Strings should be passed in "YYYYMMDDhhmmss" format - for the sake of requests simplicity, they will be converted before
   comparing in ControlUtils.checkIfIsBetweenDates method
+
    */
   val getScreeningsBetweenDates: (String, String) => JsValue = (startDate: String, endDate: String) =>
     screeningsList(Await.result(db.run(allScreeningsQuery.result), 2.seconds).map(i => resultToScreeningRep(i)).toList.
       filter(i => checkIfIsBetweenDates(i, startDate, endDate))).toJson
 
-  val getSingleScreening: Int => JsValue =  id => {
-    val result = Await.result(db.run(singleScreeningQuery(id).take(1).result.headOption),2.seconds)
-    resultToSingleScreening(result.get).toJson}
 
+  val getSingleScreening: Int => Either[String,singleScreening] =  id => {
+    val result = Await.result(db.run(singleScreeningQuery(id).take(1).result.headOption), 2.seconds)
+
+    result match {
+      case Some((id, title, director, timestamp: Timestamp, rows, seats)) => Right(resultToSingleScreening(result.get))
+      case _ => Left("Nothing found. Check if there is a screening with desired Id")
+    }
+  }
 }
